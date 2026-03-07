@@ -9,8 +9,34 @@ html {
 body {
   font-family: Arial, Helvetica, sans-serif;
 }
-
 .tab-btn {
+  min-width: 96px;
+  height: 46px;
+  border: 1px solid #e5e7eb;
+  background-color: #ffffff;
+  color: #475569;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.tab-btn:hover {
+  background-color: #f8fafc;
+  color: #475569; /* text hide হওয়া বন্ধ করবে */
+}
+
+.active-tab {
+  background-color: #4f16ff !important;
+  border-color: #4f16ff !important;
+  color: #ffffff !important;
+}
+
+.active-tab:hover {
+  background-color: #4f16ff !important;
+  color: #ffffff !important;
+}
+
+/* .tab-btn {
   min-width: 96px;
   height: 46px;
   border: 1px solid #e5e7eb;
@@ -29,7 +55,7 @@ body {
   background: #4f16ff;
   border-color: #4f16ff;
   color: #ffffff;
-}
+} */
 
 .issue-card {
   background: #ffffff;
