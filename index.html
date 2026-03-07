@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GitHub Issues Tracker</title>
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/daisyui@5"
+    rel="stylesheet"
+    type="text/css"
+  />
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+  <link rel="stylesheet" href="style/style.css" />
+</head>
+<body class="bg-[#f5f7fb] text-slate-800 min-h-screen">
+
+  <section
+    id="loginView"
+    class="min-h-screen flex items-center justify-center px-4 py-10"
+  >
+    <div class="w-full max-w-md rounded-2xl bg-white shadow-[0_2px_10px_rgba(15,23,42,0.06)] border border-slate-200 p-6 sm:p-8">
+      <div class="flex flex-col items-center text-center mb-6">
+        <img
+          src="assets/github-logo.png"
+          alt="GitHub Logo"
+          class="w-20 h-20 object-contain mb-4"
+        />
+        <h1 class="text-2xl font-bold text-slate-800">GitHub Issues Tracker</h1>
+        <p class="text-sm text-slate-500 mt-1">Sign in to manage your issues</p>
+      </div>
+
+      <form id="loginForm" class="space-y-4">
+        <div>
+          <label for="username" class="block text-sm font-medium text-slate-700 mb-2">Username</label>
+          <input
+            id="username"
+            type="text"
+            placeholder="Enter Username"
+            class="w-full h-12 rounded-lg border border-slate-200 px-4 outline-none focus:border-[#4f16ff]"
+          />
+          <p class="mt-2 text-xs text-[#4f16ff] font-medium">Default: admin</p>
+        </div>
+
+        <div>
+          <label for="password" class="block text-sm font-medium text-slate-700 mb-2">Password</label>
+          <input
+            id="password"
+            type="password"
+            placeholder="Enter Password"
+            class="w-full h-12 rounded-lg border border-slate-200 px-4 outline-none focus:border-[#4f16ff]"
+          />
+          <p class="mt-2 text-xs text-[#4f16ff] font-medium">Default: admin123</p>
+        </div>
+
+        <button
+          type="submit"
+          class="w-full h-12 rounded-lg bg-[#4f16ff] text-white font-semibold hover:bg-[#3d0fe0] transition"
+        >
+          Sign In
+        </button>
+      </form>
+
+      <p id="loginError" class="hidden mt-3 text-sm text-red-500 text-center">
+        Invalid username or password.
+      </p>
+
+      <div class="flex items-center gap-3 my-6">
+        <div class="h-px bg-slate-200 flex-1"></div>
+        <span class="text-xs text-slate-400 font-semibold">OR</span>
+        <div class="h-px bg-slate-200 flex-1"></div>
+      </div>
+
+      <div class="text-center">
+        <p class="text-xs text-slate-400 mb-3">Demo Credentials:</p>
+        <div class="rounded-xl bg-slate-50 border border-slate-200 px-4 py-4">
+          <p class="text-sm font-semibold text-slate-700">Username: admin</p>
+          <p class="text-sm font-semibold text-slate-700">Password: admin123</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="dashboardView" class="hidden min-h-screen"></section>
+
+  <script src="script/index.js"></script>
+</body>
+</html>
