@@ -186,6 +186,9 @@ function renderIssues(issues) {
   issues.forEach((issue) => {
     const card = document.createElement("div");
     card.className = `issue-card ${issue.status}`;
+    card.setAttribute("role", "button");
+    card.setAttribute("tabindex", "0");
+    card.setAttribute("aria-label", `Open issue ${issue.title}`);
 
     card.innerHTML = `
       <div class="p-4 sm:p-5">
@@ -198,31 +201,37 @@ function renderIssues(issues) {
             />
           </div>
           <span class="priority-badge ${getPriorityClass(issue.priority)}">
-            ${issue.priority}
+            ${escapeHTML(issue.priority || "")}
           </span>
         </div>
 
-        <button class="issue-title-btn" data-id="${issue.id}">
+        <h3 class="issue-title">
           ${escapeHTML(issue.title)}
-        </button>
+        </h3>
 
         <p class="issue-desc mt-3">
           ${escapeHTML(issue.description)}
         </p>
 
         <div class="flex flex-wrap gap-2 mt-4">
-          ${issue.labels.map((label) => createLabelHTML(label)).join("")}
+          ${(issue.labels || []).map((label) => createLabelHTML(label)).join("")}
         </div>
       </div>
 
       <div class="border-t border-slate-200 px-4 sm:px-5 py-4">
-        <p class="meta-text">#${issue.id} by ${escapeHTML(issue.author)}</p>
+        <p class="meta-text">#${issue.id} by ${escapeHTML(issue.author || "")}</p>
         <p class="meta-text mt-1">${formatDate(issue.createdAt)}</p>
       </div>
     `;
 
-    const titleButton = card.querySelector(".issue-title-btn");
-    titleButton.addEventListener("click", () => openIssueModal(issue.id));
+    card.addEventListener("click", () => openIssueModal(issue.id));
+
+    card.addEventListener("keydown", (event) => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        openIssueModal(issue.id);
+      }
+    });
 
     issuesContainer.appendChild(card);
   });
@@ -247,25 +256,35 @@ async function openIssueModal(issueId) {
 }
 
 function fillModalData(issue) {
-  modalTitle.textContent = issue.title;
-  modalDescription.textContent = issue.description;
+  modalTitle.textContent = issue.title || "";
+  modalDescription.textContent = issue.description || "";
 
-  modalStatusBadge.textContent = capitalize(issue.status);
+  modalStatusBadge.textContent = capitalize(issue.status || "");
   modalStatusBadge.className = `status-badge ${issue.status === "open" ? "status-open" : "status-closed"}`;
 
-  modalOpenedBy.textContent = `Opened by ${issue.author}`;
+  modalOpenedBy.textContent = `Opened by ${issue.author || "Unknown"}`;
   modalCreatedAt.textContent = `• ${formatDate(issue.createdAt)}`;
 
-  modalAssignee.textContent = issue.assignee && issue.assignee.trim() ? issue.assignee : "Unassigned";
-  modalPriority.textContent = capitalize(issue.priority);
+  modalAssignee.textContent =
+    issue.assignee && issue.assignee.trim() ? issue.assignee : "Unassigned";
 
-  modalLabels.innerHTML = issue.labels.map((label) => createLabelHTML(label)).join("");
+  modalPriority.textContent = capitalize(issue.priority || "");
+
+  modalLabels.innerHTML = (issue.labels || []).map((label) => createLabelHTML(label)).join("");
 }
 
 function createLabelHTML(label) {
-  const normalized = label.toLowerCase().trim();
+  const safeLabel = escapeHTML(label || "");
+  const normalized = (label || "").toLowerCase().trim();
   const className = getLabelClass(normalized);
-  return `<span class="label-badge ${className}">${escapeHTML(label)}</span>`;
+  const icon = getLabelIcon(normalized);
+
+  return `
+    <span class="label-badge ${className}">
+      ${icon}
+      <span>${safeLabel}</span>
+    </span>
+  `;
 }
 
 function getLabelClass(label) {
@@ -277,6 +296,59 @@ function getLabelClass(label) {
   return "label-default";
 }
 
+function getLabelIcon(label) {
+  if (label === "bug") {
+    return `
+      <svg class="label-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M9 7V6a3 3 0 1 1 6 0v1M8 10h8M9 7h6a3 3 0 0 1 3 3v3a6 6 0 1 1-12 0v-3a3 3 0 0 1 3-3Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M4 10h2M18 10h2M5 15h2M17 15h2M8 4 6.5 2.5M16 4l1.5-1.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    `;
+  }
+
+  if (label === "help wanted") {
+    return `
+      <svg class="label-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="2.2" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M12 3.5v2.3M12 18.2v2.3M20.5 12h-2.3M5.8 12H3.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    `;
+  }
+
+  if (label === "enhancement") {
+    return `
+      <svg class="label-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 3.5 13.7 8l4.8 1.1-3.6 3 1 4.9L12 14.8 7.9 17l1-4.9-3.6-3L10.1 8 12 3.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M18.5 3.5l.6 1.7 1.7.6-1.7.6-.6 1.7-.6-1.7-1.7-.6 1.7-.6.6-1.7ZM18 14.5l.4 1.1 1.1.4-1.1.4-.4 1.1-.4-1.1-1.1-.4 1.1-.4.4-1.1Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+    `;
+  }
+
+  if (label === "good first issue") {
+    return `
+      <svg class="label-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 4v16M4 12h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    `;
+  }
+
+  if (label === "documentation") {
+    return `
+      <svg class="label-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M8 4.5h6l3 3V19a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 7 19V6A1.5 1.5 0 0 1 8.5 4.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M14 4.5V8h3.5M9.5 11.5h5M9.5 15h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    `;
+  }
+
+  return `
+    <svg class="label-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+      <circle cx="12" cy="12" r="3" fill="currentColor"/>
+    </svg>
+  `;
+}
+
 function getPriorityClass(priority) {
   const normalized = (priority || "").toLowerCase();
   if (normalized === "high") return "priority-high";
@@ -285,7 +357,13 @@ function getPriorityClass(priority) {
 }
 
 function formatDate(dateString) {
+  if (!dateString) return "";
   const date = new Date(dateString);
+
+  if (Number.isNaN(date.getTime())) {
+    return "";
+  }
+
   return date.toLocaleDateString("en-US");
 }
 
