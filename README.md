@@ -6,8 +6,9 @@
 
     const: Block-scoped and cannot be reassigned after declaration. It is used for values that should remain constant, although objects or arrays declared with const can still have their contents modified.
     - 2️⃣ What is the spread operator (...)?
-    Ans:The spread operator is used to expand elements of an array or properties of an object into another array or object.
-    It helps in copying, merging, or passing multiple values easily.
+    Ans:The spread operator (...) in JavaScript is used to expand or spread elements of an array or properties of an object into individual elements.
+    It is commonly used to copy arrays, merge arrays, pass arguments to      functions, or clone objects.
+    
     - 3️⃣ What is the difference between map(), filter(), and forEach()?
     Ans:map(): Creates a new array by applying a function to every element.
 
